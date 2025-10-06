@@ -9,33 +9,28 @@ namespace bookdb {
 
 enum class Genre { Fiction, NonFiction, SciFi, Biography, Mystery, Unknown };
 
-constexpr std::string_view GenreTotring(Genre g) {
-    // clang-format off
-    using bookdb::Genre;
-    switch (g) {
-        case Genre::Fiction:    return "Fiction";
-        case Genre::Mystery:    return "Mystery";
-        case Genre::NonFiction: return "NonFiction";
-        case Genre::SciFi:      return "SciFi";
-        case Genre::Biography:  return "Biography";
-        case Genre::Unknown:    return "Unknown";
-        default:
-            throw std::logic_error{"Unsupported bookdb::Genre"};
+constexpr std::array<std::pair<Genre, std::string_view>, 6> genre_names = {{{Genre::Fiction, "Fiction"},
+                                                                            {Genre::Mystery, "Mystery"},
+                                                                            {Genre::NonFiction, "NonFiction"},
+                                                                            {Genre::SciFi, "SciFi"},
+                                                                            {Genre::Biography, "Biography"},
+                                                                            {Genre::Unknown, "Unknown"}}};
+
+constexpr std::string_view GenreToString(Genre g) {
+    const auto &it =
+        std::find_if(genre_names.begin(), genre_names.end(), [g](const auto &pair) { return pair.first == g; });
+    if (it != genre_names.end()) {
+        return it->second;
     }
-    // clang-format on
+    throw std::logic_error{"Unsupported bookdb::Genre"};
 }
 
 constexpr Genre GenreFromString(std::string_view s) {
-    if (s == "Fiction")
-        return Genre::Fiction;
-    if (s == "NonFiction")
-        return Genre::NonFiction;
-    if (s == "SciFi")
-        return Genre::SciFi;
-    if (s == "Biography")
-        return Genre::Biography;
-    if (s == "Mystery")
-        return Genre::Mystery;
+    const auto &it =
+        std::find_if(genre_names.begin(), genre_names.end(), [s](const auto &pair) { return pair.second == s; });
+    if (it != genre_names.end()) {
+        return it->first;
+    }
     return Genre::Unknown;
 }
 
@@ -60,7 +55,7 @@ struct Book {
     auto operator<=>(const Book &) const = default;
 };
 
-using booksVector = std::vector<std::reference_wrapper<const Book>>;
+using BooksVector = std::vector<std::reference_wrapper<const Book>>;
 
 }  // namespace bookdb
 
@@ -69,7 +64,7 @@ template <>
 struct formatter<bookdb::Genre, char> {
     template <typename FormatContext>
     auto format(const bookdb::Genre g, FormatContext &fc) const {
-        const std::string_view genre_str = GenreTotring(g);
+        const std::string_view genre_str = GenreToString(g);
 
         return format_to(fc.out(), "{}", genre_str);
     }

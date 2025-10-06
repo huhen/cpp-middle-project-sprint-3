@@ -83,7 +83,7 @@ auto sampleRandomBooks(const BookDatabase<T> &cont, size_t N) {
         throw std::length_error(std::format(
             "Number of requested books({}) must be less or equal number of books in the database({})", N, cont.size()));
 
-    booksVector randomBooks;
+    BooksVector randomBooks;
 
     randomBooks.reserve(N);
     std::sample(cont.begin(), cont.end(), std::back_inserter(randomBooks), N, std::mt19937{std::random_device{}()});
@@ -99,7 +99,7 @@ auto getTopNBy(std::span<Book> books, size_t N, Comparator comp = {}) {
 
     std::partial_sort(books.begin(), books.begin() + N, books.end(), comp);
 
-    booksVector topBooks;
+    BooksVector topBooks;
     topBooks.reserve(N);
     std::copy_n(books.begin(), N, std::back_inserter(topBooks));
 

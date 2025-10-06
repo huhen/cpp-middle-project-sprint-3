@@ -41,7 +41,7 @@ constexpr auto GenreIs(const Genre genre) {
 
 template <BookIterator T, BookPredicate Predicate>
 auto filterBooks(T first, T last, Predicate &&f) {
-    booksVector results;
+    BooksVector results;
     std::copy_if(first, last, std::back_inserter(results), std::forward<Predicate>(f));
     return results;
 }
